@@ -24,7 +24,7 @@ nothing in `components/` needs touching to publish real work.
 
 | File | Holds |
 |---|---|
-| `data/site.ts` | Name, role, availability, contact channels, social links, nav |
+| `data/site.ts` | Name, role, availability, the About quote, contact channels, social links, nav |
 | `data/projects.ts` | The Selected Work slots |
 | `data/services.ts` | The services list |
 | `data/process.ts` | The four process steps |
@@ -121,5 +121,26 @@ npm run audit:ui   # axe-core, LCP/CLS, tab order, reduced-motion pass
 ```
 
 Both drive a real browser against a running server (`npm run build && npm start`
-first). Current state: 0 axe violations at 375 and 1440, LCP ~230ms, CLS 0, no
-horizontal overflow at any tested width.
+first). `audit:ui` also checks that every line-starting element at 375px is
+flush to the page gutter, which is how the phone layout stays aligned as
+content changes.
+
+Current state: 0 axe violations at 375 and 1440, LCP ~230ms, CLS 0, no
+horizontal overflow at any tested width, and no gutter drift at 375px.
+
+## Notes on the phone layout
+
+It is designed, not shrunk:
+
+- The wordmark is set solid in front of the portrait rather than as a double
+  exposure, and the tagline breaks at the sentence so it reads as a title card.
+- The lead project holds the page gutter instead of running edge to edge, and
+  its category moves down beside the title so the metadata row never wraps.
+- A 21:9 frame opens up to 16:9 — at 335px wide the wide master would be a
+  143px sliver.
+- Service indices drop from display numerals to small markers so titles stay
+  flush left instead of being pushed in by the number.
+- Contact labels sit above their values rather than in a fixed column that
+  would cost a third of the screen.
+- The portrait and the quote carry the About section, which is otherwise an
+  unbroken wall of text on a phone.

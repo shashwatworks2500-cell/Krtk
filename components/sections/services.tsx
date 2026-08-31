@@ -1,4 +1,5 @@
 import { services } from "@/data/services";
+import { joinInline } from "@/lib/typography";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionMarker } from "@/components/ui/section-marker";
 
@@ -30,17 +31,23 @@ export function Services() {
               delay={Math.min(index, 3) * 60}
               className="border-line group relative border-t last:border-b"
             >
-              <div className="relative grid grid-cols-1 items-start gap-x-8 gap-y-4 py-8 transition-transform duration-500 ease-[var(--ease-out-quart)] md:grid-cols-12 md:py-10 md:group-hover:translate-x-2">
-                <span className="text-h3 group-hover:text-signal-bright font-mono font-medium text-white/35 transition-colors duration-500 md:col-span-2">
-                  {service.id}
-                </span>
-                <h3 className="text-h3 font-extrabold md:col-span-4">
-                  {service.title}
-                </h3>
+              <div className="relative grid grid-cols-1 items-start gap-x-8 gap-y-3 py-7 transition-transform duration-500 ease-[var(--ease-out-quart)] sm:py-8 md:grid-cols-12 md:gap-y-4 md:py-10 md:group-hover:translate-x-2">
+                {/* At full width the index is a display numeral in its own
+                    column. On a phone that would eat a whole line and push the
+                    title off the gutter, so it drops to a small marker and
+                    every element stays flush left. */}
+                <div className="md:contents">
+                  <span className="meta group-hover:text-signal-bright mb-2 block font-mono text-white/45 transition-colors duration-500 md:mb-0 md:text-h3 md:col-span-2 md:font-medium md:text-white/35">
+                    {service.id}
+                  </span>
+                  <h3 className="text-h3 font-extrabold md:col-span-4">
+                    {service.title}
+                  </h3>
+                </div>
                 <p className="text-silver max-w-[52ch] text-sm leading-relaxed md:col-span-5 md:col-start-8">
                   {service.description}
                   <span className="meta text-muted mt-4 block uppercase">
-                    {service.includes.join(" · ")}
+                    {joinInline(service.includes)}
                   </span>
                 </p>
               </div>

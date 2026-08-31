@@ -5,8 +5,8 @@ export function SiteFooter() {
   return (
     <footer className="border-line bg-carbon-deep border-t">
       <div className="shell py-14 sm:py-16">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-12">
-          <div className="md:col-span-5">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-12 md:gap-y-12">
+          <div className="col-span-2 md:col-span-5">
             <p className="text-canvas text-3xl font-black tracking-[-0.045em] uppercase sm:text-4xl">
               {site.name}
             </p>
@@ -57,7 +57,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="border-line mt-14 flex flex-wrap items-center justify-between gap-4 border-t pt-6">
+        <div className="border-line mt-12 flex flex-wrap items-center justify-between gap-4 border-t pt-6 md:mt-14">
           <p className="meta text-muted">
             © {site.year} {site.name}
           </p>

@@ -27,6 +27,15 @@ export const site = {
   year: 2026,
 } as const;
 
+/**
+ * A short line in Kartik's own voice, used beside the portrait. It is a
+ * statement about craft, not a claim about results — keep it that way.
+ */
+export const aboutQuote = {
+  text: "Every cut is a decision about what someone feels next. That is the whole job.",
+  attribution: "Kartik",
+} as const;
+
 export const contact: ContactChannel[] = [
   { label: "Email", value: "hello@example.com", href: null },
   { label: "Instagram", value: "@placeholder", href: null },

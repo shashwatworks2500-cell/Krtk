@@ -86,21 +86,30 @@ export function Hero() {
           </p>
         </div>
 
-        <div className="flex items-end justify-between gap-8">
-          <a
-            href="#work"
-            className="group text-muted hover:text-canvas flex items-center gap-3 transition-colors duration-300"
-          >
-            <span
-              className="scroll-cue relative block h-10 w-px overflow-hidden bg-white/15"
-              aria-hidden="true"
-            />
-            <span className="label">Scroll to explore</span>
-          </a>
-
-          <p className="text-silver hidden max-w-[22ch] text-right text-sm leading-relaxed text-balance sm:block">
-            Raw footage in. A finished story out.
+        <div>
+          {/* The tagline sits beside the scroll cue on wider screens; on a
+              phone it gets its own line so it is not squeezed to two words. */}
+          <p className="text-silver mb-7 text-sm leading-relaxed sm:hidden">
+            <span className="block">Raw footage in.</span>
+            <span className="block">A finished story out.</span>
           </p>
+
+          <div className="flex items-end justify-between gap-8">
+            <a
+              href="#work"
+              className="group text-muted hover:text-canvas flex items-center gap-3 transition-colors duration-300"
+            >
+              <span
+                className="scroll-cue relative block h-10 w-px overflow-hidden bg-white/15"
+                aria-hidden="true"
+              />
+              <span className="label">Scroll to explore</span>
+            </a>
+
+            <p className="text-silver hidden max-w-[22ch] text-right text-sm leading-relaxed text-balance sm:block">
+              Raw footage in. A finished story out.
+            </p>
+          </div>
         </div>
       </div>
 

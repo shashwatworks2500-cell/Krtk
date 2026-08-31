@@ -4,8 +4,13 @@ import { PlayIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { HoverClip } from "@/components/sections/hover-clip";
 
+/**
+ * Delivery ratio drives the frame's shape. A 21:9 master would be a 143px
+ * sliver on a phone, so the widest format opens up to 16:9 until there is
+ * room for it.
+ */
 const ASPECT: Record<Project["format"], string> = {
-  "21:9": "aspect-[21/9]",
+  "21:9": "aspect-video md:aspect-[21/9]",
   "16:9": "aspect-video",
   "4:5": "aspect-[4/5]",
   "1:1": "aspect-square",
@@ -82,7 +87,7 @@ export function ProjectFrame({ project, sizes, className }: ProjectFrameProps) {
       />
 
       {/* Timecode strip. */}
-      <div className="border-line bg-carbon-deep/70 absolute inset-x-0 bottom-0 flex h-10 items-center gap-4 border-t px-3 backdrop-blur-[2px]">
+      <div className="border-line bg-carbon-deep/70 absolute inset-x-0 bottom-0 flex h-9 items-center gap-3 border-t px-3 backdrop-blur-[2px] sm:h-10 sm:gap-4 sm:px-4">
         <span className="meta text-muted shrink-0">
           {poster || clip ? "00:00:00:00" : "NO SOURCE"}
         </span>
@@ -92,7 +97,7 @@ export function ProjectFrame({ project, sizes, className }: ProjectFrameProps) {
         />
         <span className="meta text-muted flex shrink-0 items-center gap-2">
           <PlayIcon className="h-2.5 w-2.5" />
-          {runtime} · {format}
+          {runtime} · {format}
         </span>
       </div>
 

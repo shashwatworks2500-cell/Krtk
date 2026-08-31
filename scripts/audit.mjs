@@ -40,6 +40,64 @@ for (const width of [375, 1440]) {
   await page.close();
 }
 
+/* ---------- Gutter alignment at phone width ---------- */
+{
+  const page = await browser.newPage({ viewport: { width: 375, height: 800 } });
+  await page.goto(url, { waitUntil: "networkidle" });
+  await page.evaluate(() => {
+    document.querySelectorAll("[data-reveal]").forEach((el) => {
+      el.dataset.reveal = "in";
+    });
+  });
+  const drift = await page.evaluate(() => {
+    const gutter = parseFloat(
+      getComputedStyle(document.querySelector("main .shell")).paddingLeft,
+    );
+    const selectors = [
+      "h1, h2, h3",
+      "main p",
+      "main .label",
+      "main .meta",
+      "footer a",
+      "footer p",
+    ];
+    const out = [];
+    for (const selector of selectors) {
+      for (const el of document.querySelectorAll(selector)) {
+        const style = getComputedStyle(el);
+        // Only elements that start their own line can drift off the gutter.
+        // Flex children (a marker label, a frame's timecode, the scroll cue)
+        // are placed relative to their siblings by design, and flex blockifies
+        // them, so they have to be excluded explicitly.
+        if (style.display === "none" || style.textAlign === "right") continue;
+        const parentDisplay = el.parentElement
+          ? getComputedStyle(el.parentElement).display
+          : "";
+        if (parentDisplay.includes("flex")) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0) continue;
+        // A near-miss is drift; a genuine second column (the footer's link
+        // pair) sits far enough out to be a deliberate placement.
+        const offset = Math.abs(rect.left - gutter);
+        if (offset > 0.75 && offset <= 80) {
+          out.push({
+            left: Math.round(rect.left * 10) / 10,
+            text: (el.textContent || "").trim().slice(0, 32),
+          });
+        }
+      }
+    }
+    return { gutter, out };
+  });
+  console.log(`\n=== gutter alignment @375px (target ${drift.gutter}px) ===`);
+  console.log(
+    drift.out.length === 0
+      ? "  every element flush to the gutter"
+      : drift.out.map((d) => `  ${d.left}px — ${d.text}`).join("\n"),
+  );
+  await page.close();
+}
+
 /* ---------- Vitals ---------- */
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 await page.goto(url, { waitUntil: "load" });

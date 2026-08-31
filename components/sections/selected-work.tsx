@@ -46,8 +46,8 @@ export function SelectedWork() {
 
       {featured ? <FeaturedProject project={featured} /> : null}
 
-      <div className="shell mt-24 sm:mt-32">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-16 md:grid-cols-12 md:gap-y-0">
+      <div className="shell mt-20 sm:mt-28 lg:mt-32">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-20 sm:gap-y-24 md:grid-cols-12 md:gap-y-0">
           {rest.map((project, index) => {
             const rhythm = RHYTHM[index % RHYTHM.length];
             return (
@@ -66,36 +66,48 @@ export function SelectedWork() {
   );
 }
 
-/** The lead project runs edge to edge with its metadata set beside it. */
+/**
+ * The lead project. It runs edge to edge once there is width for it; on a
+ * phone it holds the page gutter so every element in the column shares one
+ * left edge.
+ */
 function FeaturedProject({ project }: { project: Project }) {
   return (
-    <Reveal as="article" className="mt-16 sm:mt-24">
+    <Reveal as="article" className="mt-12 sm:mt-20 lg:mt-24">
       <ProjectShell project={project}>
         <div className="shell">
-          <div className="border-line flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t pt-4">
+          {/* The category would wrap to a ragged second line on a phone, so it
+              moves down beside the title there. */}
+          <div className="border-line flex items-baseline justify-between gap-4 border-t pt-4">
             <span className="label text-canvas">{project.id}</span>
-            <span className="meta text-muted uppercase">
+            <span className="meta text-muted hidden uppercase sm:block">
               {project.category}
             </span>
-            <span className="meta text-muted ml-auto uppercase">
-              {project.year} · {project.runtime}
+            <span className="meta text-muted uppercase">
+              {project.year} · {project.runtime}
             </span>
           </div>
         </div>
 
-        <div className="mt-6 px-[max(0px,calc((100vw-108rem)/2))]">
-          <ProjectFrame
-            project={project}
-            sizes="100vw"
-            className="border-x-0 sm:border-x"
-          />
+        <div className="shell mt-5 sm:mt-6 sm:px-0">
+          <div className="sm:px-[max(0px,calc((100vw-108rem)/2))]">
+            <ProjectFrame
+              project={project}
+              sizes="(max-width: 639px) 90vw, 100vw"
+            />
+          </div>
         </div>
 
-        <div className="shell mt-6">
-          <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
-            <h3 className="text-h3 max-w-[16ch] font-extrabold">
-              {project.title}
-            </h3>
+        <div className="shell mt-5 sm:mt-6">
+          <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
+            <div>
+              <h3 className="text-h3 max-w-[16ch] font-extrabold">
+                {project.title}
+              </h3>
+              <p className="meta text-muted mt-2 uppercase sm:hidden">
+                {project.category}
+              </p>
+            </div>
             <p className="text-silver max-w-[46ch] text-sm leading-relaxed">
               {project.description}
             </p>
@@ -114,15 +126,15 @@ function ProjectCard({ project, sizes }: { project: Project; sizes: string }) {
       <div className="border-line mt-5 flex items-baseline justify-between gap-4 border-t pt-4">
         <span className="label text-canvas">{project.id}</span>
         <span className="meta text-muted uppercase">
-          {project.year} · {project.runtime}
+          {project.year} · {project.runtime}
         </span>
       </div>
-      <h3 className="text-h3 mt-4 font-extrabold">{project.title}</h3>
+      <h3 className="text-h3 mt-3.5 font-extrabold">{project.title}</h3>
       <p className="meta text-muted mt-2 uppercase">{project.category}</p>
       <p className="text-silver mt-4 max-w-[44ch] text-sm leading-relaxed">
         {project.description}
       </p>
-      <ProjectAction href={project.href} className="mt-6" />
+      <ProjectAction href={project.href} className="mt-5" />
     </ProjectShell>
   );
 }
