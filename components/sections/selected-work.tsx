@@ -84,7 +84,9 @@ function FeaturedProject({ project }: { project: Project }) {
               {project.category}
             </span>
             <span className="meta text-muted uppercase">
-              {project.year} · {project.runtime}
+              {project.runtime
+                ? `${project.year} · ${project.runtime}`
+                : project.year}
             </span>
           </div>
         </div>
@@ -126,7 +128,9 @@ function ProjectCard({ project, sizes }: { project: Project; sizes: string }) {
       <div className="border-line mt-5 flex items-baseline justify-between gap-4 border-t pt-4">
         <span className="label text-canvas">{project.id}</span>
         <span className="meta text-muted uppercase">
-          {project.year} · {project.runtime}
+          {project.runtime
+            ? `${project.year} · ${project.runtime}`
+            : project.year}
         </span>
       </div>
       <h3 className="text-h3 mt-3.5 font-extrabold">{project.title}</h3>

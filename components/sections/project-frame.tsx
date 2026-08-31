@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { Project } from "@/data/projects";
 import { PlayIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
-import { HoverClip } from "@/components/sections/hover-clip";
+import { ProjectClip } from "@/components/sections/project-clip";
 
 /**
  * Delivery ratio drives the frame's shape. A 21:9 master would be a 143px
@@ -36,6 +36,11 @@ export function ProjectFrame({ project, sizes, className }: ProjectFrameProps) {
     <div
       className={cn(
         "border-line bg-carbon-raised group-hover:border-line-strong relative overflow-hidden border transition-colors duration-500 ease-[var(--ease-out-quart)]",
+        // A tall format dropped into a wide slot would otherwise run past a
+        // full screen height; the crop is preferable to the scroll. w-full is
+        // load-bearing: without a definite width the aspect box satisfies
+        // max-height by narrowing instead of cropping.
+        "w-full max-h-[82vh]",
         ASPECT[format],
         className,
       )}
@@ -59,7 +64,7 @@ export function ProjectFrame({ project, sizes, className }: ProjectFrameProps) {
         </div>
       )}
 
-      {clip ? <HoverClip src={clip} poster={poster} /> : null}
+      {clip ? <ProjectClip src={clip} /> : null}
 
       {/* Crop marks — the frame reads as a shot, not a card. */}
       <span
@@ -97,7 +102,7 @@ export function ProjectFrame({ project, sizes, className }: ProjectFrameProps) {
         />
         <span className="meta text-muted flex shrink-0 items-center gap-2">
           <PlayIcon className="h-2.5 w-2.5" />
-          {runtime} · {format}
+          {runtime ? `${runtime} · ${format}` : format}
         </span>
       </div>
 

@@ -13,12 +13,12 @@ one where the movement genuinely sells the work.
 
 A 30 MB+ video hits three separate walls, and they are all real:
 
-| Where | Limit |
-|---|---|
-| GitHub web upload (drag and drop) | **25 MB** per file |
-| GitHub via `git push` | warns at 50 MB, **hard-rejects at 100 MB** |
-| Git history | the file is stored **forever**, in every clone, even after you delete it |
-| Hosting bandwidth | every visitor downloads the whole file before playing a frame |
+| Where                             | Limit                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------ |
+| GitHub web upload (drag and drop) | **25 MB** per file                                                       |
+| GitHub via `git push`             | warns at 50 MB, **hard-rejects at 100 MB**                               |
+| Git history                       | the file is stored **forever**, in every clone, even after you delete it |
+| Hosting bandwidth                 | every visitor downloads the whole file before playing a frame            |
 
 The bandwidth one is the reason not to do it even when the file is small enough
 to commit. A page that autoplays a 30 MB loop costs 30 MB per visitor and takes
@@ -46,25 +46,36 @@ prep script so it matches the project's `format`:
 node scripts/prepare-media.mjs ~/exports/frame.png public/images/projects/project-03.jpg --ratio 16:9
 ```
 
-**3. A tiny hover loop → this folder.** Cut 3–6 seconds of the most watchable
-movement, strip the audio, and compress hard. With ffmpeg:
+**3. A tiny preview loop → this folder.** Use the script; it does all of the
+below and writes the matching poster from the clip's own first frame:
 
 ```bash
-ffmpeg -i source.mp4 -ss 00:00:12 -t 5 \
-  -vf "scale=960:-2,fps=24" \
-  -c:v libx264 -profile:v main -pix_fmt yuv420p \
-  -crf 30 -preset slow -movflags +faststart -an \
-  public/videos/projects/project-03.mp4
+npm run clip -- source.mov public/videos/projects/project-03.mp4 --width 1280 --start 12 --duration 5
 ```
 
-- `-ss 00:00:12 -t 5` — start at 12 s, take 5 seconds. Pick your best beat.
-- `scale=960:-2` — 960px wide is plenty for a card; `-2` keeps the aspect ratio.
-- `-crf 30` — quality. Lower is better and bigger; 28–32 is the useful range.
+It shells out to the bundled ffmpeg (`ffmpeg-static`, a devDependency, so
+`npm install` is all you need) and runs the equivalent of:
+
+```bash
+ffmpeg -ss 12 -t 5 -i source.mov \
+  -vf "scale=1280:-2" \
+  -c:v libx264 -profile:v main -pix_fmt yuv420p \
+  -crf 28 -preset slow -movflags +faststart -an \
+  project-03.mp4
+```
+
+- `--start 12 --duration 5` — take five seconds from 12 s in. Pick your best beat.
+- `--width 1280` — plenty for a card; use 720 for a vertical clip.
+- `--crf 28` — quality. Lower is better and bigger; 28–32 is the useful range.
 - `-an` — drops the audio track. The preview is muted anyway, so this is free.
 - `-movflags +faststart` — moves the index to the front so it starts instantly.
 
+H.264 rather than VP9/WebM: it is the one codec every browser and every iPhone
+plays, and on this footage VP9 came out roughly three times larger at matched
+quality, so a second format would cost more than it saved.
+
 Check the result: `ls -lh public/videos/projects/`. If it is over ~2 MB, raise
-the `crf` or shorten the clip.
+`--crf` or shorten the clip.
 
 Then point the project at both:
 

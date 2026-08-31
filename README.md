@@ -22,12 +22,12 @@ npm run lint         # eslint
 Everything a visitor reads lives in `data/`. The components consume it, so
 nothing in `components/` needs touching to publish real work.
 
-| File | Holds |
-|---|---|
-| `data/site.ts` | Name, role, availability, the About quote, contact channels, social links, nav |
-| `data/projects.ts` | The Selected Work slots |
-| `data/services.ts` | The services list |
-| `data/process.ts` | The four process steps |
+| File               | Holds                                                                          |
+| ------------------ | ------------------------------------------------------------------------------ |
+| `data/site.ts`     | Name, role, availability, the About quote, contact channels, social links, nav |
+| `data/projects.ts` | The Selected Work slots — copy, formats, posters and clips                     |
+| `data/services.ts` | The services list                                                              |
+| `data/process.ts`  | The four process steps                                                         |
 
 ### Publishing a real project
 
@@ -71,10 +71,27 @@ empty.
 
 ### Video
 
-The finished cut never goes in the repository. Put it on a video host, link it
-from the project's `href`, and keep only a short muted hover loop locally.
-`public/videos/projects/README.md` has the size limits, the reasoning and the
-ffmpeg recipe for producing the loop.
+Camera files never go in the repository — a phone clip is HEVC in a `.mov`,
+which no browser plays, and tens of megabytes besides. `npm run clip` turns one
+into a web preview plus its poster frame:
+
+```bash
+npm run clip -- ~/exports/IMG_4931.mov public/videos/projects/project-01.mp4 --width 1280
+```
+
+That re-encodes to H.264, drops the audio track (the preview is muted, so it is
+pure weight), moves the index to the head so playback starts immediately, and
+writes the matching poster from the clip's own first frame — so the card does
+not jump when the loop starts. Useful flags: `--start 12 --duration 5` to take a
+window out of a longer file, and `--crf 31` to compress harder.
+
+Then point the project at both in `data/projects.ts`. Keep each clip under a
+couple of megabytes; the finished cut belongs on a video host, linked from
+`href`. `public/videos/projects/README.md` has the limits and the reasoning.
+
+Previews play on hover on a pointer device and while the card is on screen on
+touch, so a phone visitor still sees the work move. Nothing autoplays under
+`prefers-reduced-motion`, and nothing is fetched until it is needed.
 
 ### Replacing the hero subject
 
@@ -113,16 +130,16 @@ node scripts/prepare-media.mjs <source> <out> [--ratio 16:9] [--focus 0.45] [--g
 
 Tokens are defined once in `app/globals.css` under `@theme`.
 
-| Token | Value | Role |
-|---|---|---|
-| `carbon` | `#17181A` | Foundation |
-| `carbon-deep` | `#0E0F10` | Full-bleed sections |
-| `carbon-raised` | `#1E2023` | Frames and surfaces |
-| `canvas` | `#F4F5F6` | Primary type |
-| `silver` | `#C9CDD2` | Secondary type |
-| `muted` | `#8A9097` | Metadata |
-| `signal` | `#C8102E` | Marks, rules, the CTA |
-| `signal-pressed` | `#8E0B20` | CTA pressed |
+| Token            | Value     | Role                  |
+| ---------------- | --------- | --------------------- |
+| `carbon`         | `#17181A` | Foundation            |
+| `carbon-deep`    | `#0E0F10` | Full-bleed sections   |
+| `carbon-raised`  | `#1E2023` | Frames and surfaces   |
+| `canvas`         | `#F4F5F6` | Primary type          |
+| `silver`         | `#C9CDD2` | Secondary type        |
+| `muted`          | `#8A9097` | Metadata              |
+| `signal`         | `#C8102E` | Marks, rules, the CTA |
+| `signal-pressed` | `#8E0B20` | CTA pressed           |
 
 Contrast on carbon: canvas 16.3:1, silver 11.1:1, muted 5.5:1. Red measures
 3.0:1, so it is never used for small text — only large display type, fills and
