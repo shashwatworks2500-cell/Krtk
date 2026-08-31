@@ -1,0 +1,407 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Design tokens — "Cutting Room"
+ *
+ * Carbon is the foundation, canvas carries primary type, silver carries
+ * secondary type, and red is reserved for marks, rules and one CTA.
+ *
+ * Contrast on carbon (#17181A): canvas 16.3:1, silver 11.1:1, muted 5.5:1.
+ * Red is 3.0:1 — it never carries small text, only large display type,
+ * fills and 1px rules. Canvas on red is 5.4:1, so the CTA holds copy.
+ * ------------------------------------------------------------------ */
+
+@theme {
+  --color-carbon: #17181a;
+  --color-carbon-deep: #0e0f10;
+  --color-carbon-raised: #1e2023;
+  --color-signal: #c8102e;
+  --color-signal-bright: #e0142f;
+  --color-signal-pressed: #8e0b20;
+  --color-canvas: #f4f5f6;
+  --color-silver: #c9cdd2;
+  --color-muted: #8a9097;
+
+  --color-line: color-mix(in srgb, #c9cdd2 14%, transparent);
+  --color-line-strong: color-mix(in srgb, #c9cdd2 28%, transparent);
+
+  --font-display:
+    var(--font-archivo), "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace,
+    "SFMono-Regular", monospace;
+
+  /* Modular scale, 1.25 ratio, fluid between 375px and 1440px. */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.18em;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.1em;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+  --text-lead: clamp(1.25rem, 0.95rem + 1.1vw, 1.75rem);
+  --text-lead--line-height: 1.45;
+  --text-h3: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  --text-h3--line-height: 1.15;
+  --text-h3--letter-spacing: -0.02em;
+  --text-h2: clamp(2.5rem, 1.4rem + 4.6vw, 5.5rem);
+  --text-h2--line-height: 0.95;
+  --text-h2--letter-spacing: -0.035em;
+  --text-statement: clamp(1.75rem, 0.9rem + 3.6vw, 4rem);
+  --text-statement--line-height: 1.05;
+  --text-statement--letter-spacing: -0.03em;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --spacing-gutter: clamp(1.25rem, 4vw, 4.5rem);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+
+@layer base {
+  html {
+    background-color: var(--color-carbon);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Lenis drives scrolling on capable pointers; this is the no-JS and
+     reduced-motion path for in-page anchors. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background-color: var(--color-carbon);
+    color: var(--color-silver);
+    font-family: var(--font-display);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--color-canvas);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-signal);
+    color: var(--color-canvas);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-canvas);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  /* Lenis owns the scroll position; the browser must not restore it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Utilities
+ * ------------------------------------------------------------------ */
+
+/* Small uppercase metadata — the mono voice used for indices, timecodes
+   and section labels. */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+}
+
+@utility meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  line-height: var(--text-meta--line-height);
+  letter-spacing: var(--text-meta--letter-spacing);
+}
+
+/* Page gutter, shared by every section so the left edge never drifts. */
+@utility shell {
+  width: 100%;
+  max-width: 108rem;
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+/* Film grain. Fixed and non-interactive so it never repaints on scroll. */
+@utility grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ *
+ * Scroll reveal — one transition, fired once by IntersectionObserver.
+ * ------------------------------------------------------------------ */
+
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0);
+    transition:
+      opacity 0.8s var(--ease-out-quart),
+      transform 0.8s var(--ease-out-quart);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="in"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-reveal],
+  [data-reveal="in"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Hero composition
+ *
+ * The wordmark is rendered twice from identical slots: a solid pass that
+ * sits behind the portrait, and an outlined pass in front of it, revealed
+ * only across the portrait column. The result is a double exposure without
+ * cutting the subject out of the photograph.
+ * ------------------------------------------------------------------ */
+
+@layer components {
+  .hero-slot {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 21vh;
+    width: 100%;
+    max-width: 108rem;
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+    container-type: inline-size;
+    pointer-events: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero-slot {
+      bottom: 15vh;
+    }
+  }
+
+  /* "KARTIK" at Archivo 900 with -0.05em tracking measures 3.953x its font
+     size, so 100cqw / 3.953 sets the word flush to the measure at every
+     width. The vw value is the fallback for engines without container units. */
+  .hero-word {
+    display: block;
+    font-weight: 900;
+    font-size: 22.6vw;
+    font-size: 25.1cqw;
+    line-height: 0.78;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+  }
+
+  .hero-word--solid {
+    color: var(--color-canvas);
+  }
+
+  /* Outlined display type — the hero's double exposure, reused once in the
+     work heading so the device reads as a system rather than a one-off. */
+  .type-outline {
+    color: transparent;
+    -webkit-text-stroke: 1px
+      color-mix(in srgb, var(--color-canvas) 55%, transparent);
+  }
+
+  .hero-word--outline {
+    color: transparent;
+    -webkit-text-stroke: 1px
+      color-mix(in srgb, var(--color-canvas) 62%, transparent);
+  }
+
+  /* Reveal the outlined pass only across the portrait column, so the solid
+     pass stays clean everywhere else. Desktop only — on a phone the word is
+     set solid in front of the photograph instead. */
+  .hero-outline-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 44%,
+      #000 55%,
+      #000 100%
+    );
+    mask-image: linear-gradient(to right, transparent 44%, #000 55%, #000 100%);
+  }
+
+  /* The photograph dissolves into carbon at every edge so it reads as a lit
+     subject in the room rather than a rectangle pasted onto the page. */
+  .hero-portrait {
+    filter: grayscale(1) contrast(1.24) brightness(0.58);
+    -webkit-mask-image:
+      linear-gradient(
+        to right,
+        transparent 0%,
+        #000 24%,
+        #000 80%,
+        transparent 99%
+      ),
+      linear-gradient(to bottom, transparent 0%, #000 34%, #000 100%);
+    mask-image:
+      linear-gradient(
+        to right,
+        transparent 0%,
+        #000 24%,
+        #000 80%,
+        transparent 99%
+      ),
+      linear-gradient(to bottom, transparent 0%, #000 34%, #000 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Playhead — scroll progress as a scrubber. No scroll listener; browsers
+     without scroll-driven animations simply never reveal it. */
+  @supports (animation-timeline: scroll()) {
+    .playhead {
+      animation: playhead linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  @keyframes playhead {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Scroll cue: a light travelling down a hairline. */
+  .scroll-cue::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 40%;
+    background: var(--color-canvas);
+    animation: scroll-cue 2.4s var(--ease-out-quart) infinite;
+  }
+
+  @keyframes scroll-cue {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    35% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(250%);
+      opacity: 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue::after {
+    animation: none;
+    opacity: 0.5;
+    transform: none;
+  }
+}
+
+/* Record light. Slow enough to read as a status, not a blink. */
+@layer components {
+  .record-dot {
+    animation: record 3.2s var(--ease-out-quart) infinite;
+  }
+
+  @keyframes record {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+
+  /* Frame placeholder: crop marks + a scrubbable timeline strip. */
+  .crop-mark {
+    position: absolute;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-color: color-mix(in srgb, var(--color-silver) 32%, transparent);
+  }
+
+  /* Frame surface: a single soft light from the upper left so the placeholder
+     has depth without a drop shadow. */
+  .frame-surface {
+    container-type: inline-size;
+    background-image: radial-gradient(
+      120% 90% at 12% 0%,
+      color-mix(in srgb, var(--color-silver) 6%, transparent) 0%,
+      transparent 62%
+    );
+  }
+
+  .timeline-ticks {
+    background-image: repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-silver) 22%, transparent) 0 1px,
+      transparent 1px 9px
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record-dot {
+    animation: none;
+  }
+}
