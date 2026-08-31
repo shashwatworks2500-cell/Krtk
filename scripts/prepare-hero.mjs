@@ -1,12 +1,14 @@
 /**
- * Prepares the hero portrait: trims platform watermarks from the source frame,
- * applies a restrained base grade, and writes the optimised asset that
- * `components/hero/hero-portrait.tsx` consumes.
+ * Prepares the hero subject: trims the transparent margin from a cut-out
+ * portrait, scales it to the master size, applies the base grade and writes the
+ * asset that `components/hero/hero.tsx` consumes.
  *
- * Usage: node scripts/prepare-hero.mjs <source-image> [--out public/images/kartik-hero.jpg]
+ * Usage: node scripts/prepare-hero.mjs <source.png> [--out public/images/kartik-hero.webp]
  *
- * The heavy cinematic treatment (contrast, carbon wash, edge dissolve) lives in
- * CSS so a replacement photograph inherits it automatically.
+ * The source must have an alpha channel — the composition depends on the
+ * wordmark being genuinely occluded by the subject rather than masked around a
+ * rectangle. The cinematic treatment (contrast, monochrome, base fade) lives in
+ * CSS so a replacement cut-out inherits it.
  */
 import { argv } from "node:process";
 import { writeFile } from "node:fs/promises";
@@ -14,44 +16,69 @@ import sharp from "sharp";
 
 const source = argv[2];
 if (!source) {
-  console.error(
-    "usage: node scripts/prepare-hero.mjs <source-image> [--out <path>]",
-  );
+  console.error("usage: node scripts/prepare-hero.mjs <source.png> [--out <path>]");
   process.exit(1);
 }
 const outIndex = argv.indexOf("--out");
-const out =
-  outIndex === -1 ? "public/images/kartik-hero.jpg" : argv[outIndex + 1];
+const out = outIndex === -1 ? "public/images/kartik-hero.webp" : argv[outIndex + 1];
 
-// Fractions of the frame removed to drop watermark overlays that sit in the
-// top and bottom safe areas of phone-camera exports.
-const TRIM_TOP = 0.072;
-const TRIM_BOTTOM = 0.091;
-const TARGET_WIDTH = 1240;
+const MASTER_WIDTH = 1000;
+/** Alpha below this counts as background when finding the subject. */
+const ALPHA_FLOOR = 16;
 
-const image = sharp(source).rotate();
-const { width, height } = await image.metadata();
-if (!width || !height)
-  throw new Error(`could not read dimensions of ${source}`);
+const meta = await sharp(source).metadata();
+if (!meta.width || !meta.height) throw new Error(`cannot read ${source}`);
+if (!meta.hasAlpha) {
+  throw new Error(
+    `${source} has no alpha channel — the hero needs a cut-out subject, not a photograph with a background`,
+  );
+}
 
-const top = Math.round(height * TRIM_TOP);
-const cropHeight = Math.round(height * (1 - TRIM_TOP - TRIM_BOTTOM));
+/* Find the subject's bounding box so the framing does not depend on however
+   much empty canvas the cut-out was exported with. */
+const { data, info } = await sharp(source)
+  .ensureAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+
+let minX = info.width;
+let minY = info.height;
+let maxX = 0;
+let maxY = 0;
+for (let y = 0; y < info.height; y++) {
+  for (let x = 0; x < info.width; x++) {
+    if (data[(y * info.width + x) * info.channels + 3] <= ALPHA_FLOOR) continue;
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+}
+if (maxX <= minX || maxY <= minY) throw new Error("no opaque pixels found");
 
 const pipeline = sharp(source)
-  .rotate()
-  .extract({ left: 0, top, width, height: cropHeight })
-  .resize({ width: TARGET_WIDTH, withoutEnlargement: true })
-  .modulate({ saturation: 0.82, brightness: 0.97 })
-  .linear(1.08, -10);
+  .extract({
+    left: minX,
+    top: minY,
+    width: maxX - minX + 1,
+    height: maxY - minY + 1,
+  })
+  .resize({ width: MASTER_WIDTH, kernel: "lanczos3" })
+  .modulate({ saturation: 0.9 })
+  .linear(1.06, -6);
 
-await pipeline.clone().jpeg({ quality: 88, mozjpeg: true }).toFile(out);
+/* WebP rather than PNG: alpha is preserved and the master drops from ~2.9 MB
+   to ~260 KB, which matters more than the last fraction of a percent of
+   fidelity on an image the page renders as high-contrast monochrome. */
+await pipeline.clone().webp({ quality: 92, alphaQuality: 100 }).toFile(out);
 
-// Low-resolution placeholder so the portrait never pops in against carbon.
+/* Low-resolution stand-in so the subject fades up rather than popping in.
+   Alpha is preserved, so it reads as a soft silhouette on carbon. */
 const blur = await pipeline
   .clone()
-  .resize({ width: 14 })
+  .resize({ width: 12 })
   .blur(1)
-  .webp({ quality: 45 })
+  .webp({ quality: 40, alphaQuality: 60 })
   .toBuffer();
 
 await writeFile(
@@ -61,5 +88,8 @@ await writeFile(
 );
 
 const result = await sharp(out).metadata();
+console.log(
+  `subject found at ${minX},${minY} ${maxX - minX + 1}x${maxY - minY + 1}`,
+);
 console.log(`wrote ${out} (${result.width}x${result.height})`);
 console.log("wrote app/hero-blur.ts");

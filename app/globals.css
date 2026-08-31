@@ -265,14 +265,21 @@
        there, and a hairline reads as a smudge rather than an outline. */
     -webkit-text-stroke: 2px
       color-mix(in srgb, var(--color-canvas) 88%, transparent);
+    /* A tight dark halo on the stroke itself — the fill is transparent, so
+       drop-shadow contours the outline rather than blocking in the letter.
+       Without it the stroke vanishes wherever a light band of the shirt
+       crosses it. */
+    filter: drop-shadow(
+      0 1px 2px color-mix(in srgb, var(--color-carbon-deep) 85%, transparent)
+    );
   }
 
   @media (min-width: 768px) {
     .hero-word--outline {
-      -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-width: 1.25px;
       -webkit-text-stroke-color: color-mix(
         in srgb,
-        var(--color-canvas) 62%,
+        var(--color-canvas) 78%,
         transparent
       );
     }
@@ -284,61 +291,70 @@
   .hero-outline-mask {
     -webkit-mask-image: linear-gradient(
       to right,
-      transparent 26%,
-      #000 38%,
+      transparent 22%,
+      #000 32%,
       #000 100%
     );
-    mask-image: linear-gradient(to right, transparent 26%, #000 38%, #000 100%);
+    mask-image: linear-gradient(to right, transparent 22%, #000 32%, #000 100%);
   }
 
   @media (min-width: 768px) {
     .hero-outline-mask {
       -webkit-mask-image: linear-gradient(
         to right,
-        transparent 44%,
-        #000 55%,
+        transparent 56%,
+        #000 66%,
         #000 100%
       );
       mask-image: linear-gradient(
         to right,
-        transparent 44%,
-        #000 55%,
+        transparent 56%,
+        #000 66%,
         #000 100%
       );
     }
   }
 
-  /* The photograph dissolves into carbon at every edge so it reads as a lit
-     subject in the room rather than a rectangle pasted onto the page. */
+  /* The subject is a cut-out, so there is no rectangle to dissolve — only a
+     monochrome grade to hold him inside the palette, and a fade at the base so
+     the frame edge crops him rather than slicing him with a hard line. */
   .hero-portrait {
-    /* Graded darker on a phone: the outlined half of the wordmark crosses the
-       subject there, and it needs a quiet surface to read against. */
-    filter: grayscale(1) contrast(1.32) brightness(0.42);
-    -webkit-mask-image:
-      linear-gradient(
-        to right,
-        transparent 0%,
-        #000 24%,
-        #000 80%,
-        transparent 99%
-      ),
-      linear-gradient(to bottom, transparent 0%, #000 34%, #000 100%);
-    mask-image:
-      linear-gradient(
-        to right,
-        transparent 0%,
-        #000 24%,
-        #000 80%,
-        transparent 99%
-      ),
-      linear-gradient(to bottom, transparent 0%, #000 34%, #000 100%);
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
+    /* Slightly deeper on a phone, where the wordmark crosses more of him. */
+    filter: grayscale(1) contrast(1.16) brightness(0.8);
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 95%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(to bottom, #000 0%, #000 95%, transparent 100%);
+  }
+
+  /* One soft key light behind the subject. Fixed size and position, no blur
+     filter, so it costs nothing on scroll. */
+  .hero-key-light {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      58% 46% at 74% 62%,
+      color-mix(in srgb, var(--color-silver) 9%, transparent) 0%,
+      transparent 70%
+    );
   }
 
   @media (min-width: 768px) {
     .hero-portrait {
-      filter: grayscale(1) contrast(1.24) brightness(0.58);
+      filter: grayscale(1) contrast(1.14) brightness(0.88);
+    }
+
+    .hero-key-light {
+      background: radial-gradient(
+        40% 52% at 68% 58%,
+        color-mix(in srgb, var(--color-silver) 10%, transparent) 0%,
+        transparent 70%
+      );
     }
   }
 

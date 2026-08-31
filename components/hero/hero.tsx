@@ -3,8 +3,10 @@ import { heroBlurDataURL } from "@/app/hero-blur";
 import { site } from "@/data/site";
 
 /**
- * Full-viewport editorial cover: oversized wordmark layered with the
- * portrait, corner metadata, and a single signal rule tying the two together.
+ * Full-viewport editorial cover. The subject is a cut-out, so the wordmark set
+ * behind him is genuinely occluded rather than masked around a rectangle; a
+ * second outlined pass in front carries the hidden letters back across his body
+ * so the word still reads as a word.
  */
 export function Hero() {
   return (
@@ -12,6 +14,10 @@ export function Hero() {
       id="top"
       className="bg-carbon-deep relative isolate min-h-[100dvh] overflow-hidden"
     >
+      {/* A single soft key light behind the subject, so he stands in the frame
+          rather than floating on flat black. */}
+      <div aria-hidden="true" className="hero-key-light" />
+
       {/* Layer 0 — the solid wordmark, behind the subject. */}
       <div className="hero-slot z-0">
         <h1 className="hero-word hero-word--solid">
@@ -27,30 +33,25 @@ export function Hero() {
           wordmark baseline. */}
       <div
         aria-hidden="true"
-        className="bg-signal/70 absolute inset-x-0 bottom-[21vh] z-20 h-px md:bottom-[15vh] md:z-0"
+        className="bg-signal/70 absolute inset-x-0 bottom-[21vh] z-0 h-px md:bottom-[15vh]"
       />
 
-      {/* Layer 1 — the subject. */}
-      <div className="absolute inset-0 z-10">
-        <div className="absolute right-[-12%] bottom-0 h-[70vh] w-[80%] sm:right-[-6%] sm:h-[82vh] sm:w-[74%] md:right-[2%] md:w-[54%] md:max-w-[680px] lg:right-[7%] lg:w-[46%]">
+      {/* Layer 1 — the subject, standing on the base of the frame. */}
+      <div className="pointer-events-none absolute inset-0 z-10">
+        <div className="absolute right-[-8%] bottom-0 h-[68vh] sm:right-[-2%] sm:h-[74vh] md:right-[3%] md:h-[76vh] lg:right-[8%] lg:h-[78vh]">
           <Image
-            src="/images/kartik-hero.jpg"
-            alt={`${site.name}, ${site.role.toLowerCase()}, photographed in a doorway`}
-            fill
+            src="/images/kartik-hero.webp"
+            alt={`${site.name}, ${site.role.toLowerCase()}, filming with a handheld gimbal`}
+            width={1000}
+            height={1837}
             preload
             fetchPriority="high"
             placeholder="blur"
             blurDataURL={heroBlurDataURL}
-            sizes="(max-width: 639px) 80vw, (max-width: 767px) 74vw, (max-width: 1023px) 54vw, 46vw"
-            className="hero-portrait object-cover object-[52%_14%]"
+            sizes="(max-width: 639px) 80vw, (max-width: 767px) 60vw, (max-width: 1023px) 45vw, 32vw"
+            className="hero-portrait h-full w-auto object-contain object-bottom"
           />
-          {/* Wash the lit wall on the right back down to carbon. */}
-          <div className="to-carbon-deep absolute inset-0 bg-gradient-to-r from-transparent via-transparent" />
         </div>
-
-        {/* Scrim: heavy on a phone, where the wordmark sits on top of the
-            photograph; a whisper on desktop, where it only sinks the base. */}
-        <div className="from-carbon-deep via-carbon-deep/60 absolute inset-x-0 bottom-0 h-[22vh] bg-gradient-to-t to-transparent md:hidden" />
       </div>
 
       {/* Layer 2 — outlined wordmark in front of the subject. */}

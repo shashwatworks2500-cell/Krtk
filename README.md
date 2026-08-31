@@ -76,21 +76,34 @@ from the project's `href`, and keep only a short muted hover loop locally.
 `public/videos/projects/README.md` has the size limits, the reasoning and the
 ffmpeg recipe for producing the loop.
 
-### Replacing the portrait
+### Replacing the hero subject
 
-Drop a new photograph anywhere and run:
+The hero needs a **cut-out** — a subject on a transparent background. The whole
+composition depends on it: the wordmark set behind him is genuinely occluded by
+his silhouette, and a second outlined pass in front carries the hidden letters
+back across his body so the word still reads. A photograph with a background
+cannot do that, and the script rejects one.
 
 ```bash
-npm run image:hero -- path/to/photo.jpg
+npm run image:hero -- path/to/cutout.png
 ```
 
-That trims the watermark safe areas, applies the base grade, writes
-`public/images/kartik-hero.jpg` and regenerates the blur placeholder in
-`app/hero-blur.ts`. The cinematic treatment — contrast, carbon wash, edge
-dissolve — lives in CSS, so a replacement photograph inherits it.
+That finds the subject by its alpha channel (so it does not matter how much
+empty canvas the export carried), scales it to the master size, applies the base
+grade, writes `public/images/kartik-hero.webp` and regenerates the blur
+placeholder in `app/hero-blur.ts`. WebP rather than PNG keeps the master around
+260 KB instead of 2.9 MB, with no visible difference once the page renders it as
+high-contrast monochrome.
 
-Any other image (project stills, the About poster) goes through the general
-prep script, which crops to a delivery ratio, resizes and compresses:
+The cinematic treatment — monochrome, contrast, the key light behind him, the
+fade at the base — lives in CSS, so a replacement cut-out inherits it. If the
+new subject stands noticeably further left or right, move the `hero-outline-mask`
+switchover in `app/globals.css` to match: it is the point where the solid pass
+hands over to the outlined one, and it should sit just before the subject's
+leading edge.
+
+Any other image (project stills, the About poster) goes through the general prep
+script, which crops to a delivery ratio, resizes and compresses:
 
 ```bash
 node scripts/prepare-media.mjs <source> <out> [--ratio 16:9] [--focus 0.45] [--grade mono|soft]
@@ -157,6 +170,6 @@ It is designed, not shrunk:
   would cost a third of the screen.
 - The wordmark is the same double exposure as the desktop hero — solid behind
   the subject, outlined in front of it — with a heavier stroke and a deeper
-  grade on the photograph so the outlined half stays legible at that size.
+  grade on the subject, since the word crosses more of him at that size.
 - The poster and the quote carry the About section, which is otherwise an
   unbroken wall of text on a phone.
