@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { aboutQuote, site } from "@/data/site";
+import { aboutQuote } from "@/data/site";
 import { joinInline } from "@/lib/typography";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionMarker } from "@/components/ui/section-marker";
@@ -13,7 +13,7 @@ export function About() {
       className="border-line scroll-mt-24 border-t py-20 sm:py-32 lg:py-40"
     >
       <div className="shell grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-12 md:gap-y-14">
-        <Reveal className="md:col-span-5 lg:col-span-4">
+        <Reveal className="md:col-span-5">
           <SectionMarker index="02" label="About" />
           <ul className="mt-8 flex flex-col md:mt-10">
             {ROLES.map((role) => (
@@ -26,41 +26,37 @@ export function About() {
             ))}
           </ul>
 
-          {/* The portrait carries the section on a phone, where the copy would
-              otherwise be an unbroken wall of text. */}
+          {/* The poster carries the section — the hero already holds the
+              photograph, so repeating a crop of it here would say nothing new.
+              It is the one full-colour moment on the page, so it is graded
+              down and sunk into carbon at the base rather than sitting on top
+              of the section. */}
           <figure className="mt-10 md:mt-12">
-            <div className="border-line relative aspect-[4/5] overflow-hidden border md:max-w-[22rem]">
+            <div className="border-line relative aspect-[3/4] overflow-hidden border">
               <Image
-                src="/images/kartik-portrait.jpg"
-                alt={`${site.name} at work`}
+                src="/images/kartik-poster.jpg"
+                alt="Illustrated poster of Kartik filming on location with a gimbal, captioned Focus, Create, Inspire"
                 fill
                 loading="lazy"
-                sizes="(max-width: 767px) 88vw, (max-width: 1023px) 40vw, 22rem"
-                className="object-cover object-[52%_28%] brightness-[0.6] grayscale contrast-[1.2]"
+                sizes="(max-width: 767px) 88vw, 42vw"
+                className="object-cover"
               />
               <div
                 aria-hidden="true"
-                className="from-carbon absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t to-transparent"
+                className="from-carbon absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t to-transparent"
               />
               <span
                 aria-hidden="true"
                 className="bg-signal absolute bottom-0 left-0 h-px w-16"
               />
             </div>
-
-            <figcaption className="mt-6 md:max-w-[22rem]">
-              <blockquote className="text-canvas text-lg leading-snug font-semibold text-balance sm:text-xl">
-                &ldquo;{aboutQuote.text}&rdquo;
-              </blockquote>
-              <p className="label text-muted mt-4 flex items-center gap-3">
-                <span aria-hidden="true" className="bg-signal h-px w-6" />
-                {aboutQuote.attribution}
-              </p>
+            <figcaption className="meta text-muted mt-4 uppercase">
+              Personal poster
             </figcaption>
           </figure>
         </Reveal>
 
-        <div className="md:col-span-6 md:col-start-7 lg:col-span-7 lg:col-start-6">
+        <div className="md:col-span-6 md:col-start-7">
           <Reveal>
             <p className="text-lead text-canvas max-w-[26ch] font-semibold text-balance">
               Kartik is a video editor focused on turning raw footage into
@@ -83,8 +79,24 @@ export function About() {
             </p>
           </Reveal>
 
+          {/* The quote closes the section here rather than captioning the
+              artwork, which left the right column short of the left by most of
+              the poster's height. */}
           <Reveal
-            delay={160}
+            delay={140}
+            className="border-line mt-10 border-t pt-8 md:mt-12"
+          >
+            <blockquote className="text-canvas text-xl leading-snug font-semibold text-balance sm:text-2xl">
+              &ldquo;{aboutQuote.text}&rdquo;
+            </blockquote>
+            <p className="label text-muted mt-5 flex items-center gap-3">
+              <span aria-hidden="true" className="bg-signal h-px w-6" />
+              {aboutQuote.attribution}
+            </p>
+          </Reveal>
+
+          <Reveal
+            delay={200}
             className="border-line mt-10 border-t pt-6 md:mt-12"
           >
             <p className="meta text-muted uppercase">Working in</p>

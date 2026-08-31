@@ -63,10 +63,18 @@ Asset drop points and export guidance: `public/images/projects/README.md` and
 
 ### Contact details
 
-`data/site.ts` holds placeholders. An `href` of `null` with an address-shaped
-`value` is turned into a `mailto:` automatically (`lib/contact.ts`), so the
-primary CTA works as soon as a real address is in place. Channels with neither
-render as plain text rather than dead links.
+`data/site.ts` holds the live channels — email, Instagram and WhatsApp. An
+`href` of `null` with an address-shaped `value` is turned into a `mailto:`
+automatically (`lib/contact.ts`); a channel with neither renders as plain text
+rather than a dead link, so it is better to leave a channel out than to ship it
+empty.
+
+### Video
+
+The finished cut never goes in the repository. Put it on a video host, link it
+from the project's `href`, and keep only a short muted hover loop locally.
+`public/videos/projects/README.md` has the size limits, the reasoning and the
+ffmpeg recipe for producing the loop.
 
 ### Replacing the portrait
 
@@ -77,10 +85,16 @@ npm run image:hero -- path/to/photo.jpg
 ```
 
 That trims the watermark safe areas, applies the base grade, writes
-`public/images/kartik-hero.jpg`, the About crop `public/images/kartik-portrait.jpg`,
-and regenerates the blur placeholder in `app/hero-blur.ts`. The cinematic
-treatment — contrast, carbon wash, edge dissolve — lives in CSS, so a
-replacement photograph inherits it.
+`public/images/kartik-hero.jpg` and regenerates the blur placeholder in
+`app/hero-blur.ts`. The cinematic treatment — contrast, carbon wash, edge
+dissolve — lives in CSS, so a replacement photograph inherits it.
+
+Any other image (project stills, the About poster) goes through the general
+prep script, which crops to a delivery ratio, resizes and compresses:
+
+```bash
+node scripts/prepare-media.mjs <source> <out> [--ratio 16:9] [--focus 0.45] [--grade mono|soft]
+```
 
 ## Design system
 
@@ -132,8 +146,7 @@ horizontal overflow at any tested width, and no gutter drift at 375px.
 
 It is designed, not shrunk:
 
-- The wordmark is set solid in front of the portrait rather than as a double
-  exposure, and the tagline breaks at the sentence so it reads as a title card.
+- The tagline breaks at the sentence so it reads as a title card.
 - The lead project holds the page gutter instead of running edge to edge, and
   its category moves down beside the title so the metadata row never wraps.
 - A 21:9 frame opens up to 16:9 — at 335px wide the wide master would be a
@@ -142,5 +155,8 @@ It is designed, not shrunk:
   flush left instead of being pushed in by the number.
 - Contact labels sit above their values rather than in a fixed column that
   would cost a third of the screen.
-- The portrait and the quote carry the About section, which is otherwise an
+- The wordmark is the same double exposure as the desktop hero — solid behind
+  the subject, outlined in front of it — with a heavier stroke and a deeper
+  grade on the photograph so the outlined half stays legible at that size.
+- The poster and the quote carry the About section, which is otherwise an
   unbroken wall of text on a phone.

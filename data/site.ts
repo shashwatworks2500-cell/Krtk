@@ -1,14 +1,12 @@
 /**
  * Single source of truth for identity, contact details and social links.
- * Every value here is a placeholder until Kartik supplies the real one —
- * replace the strings, nothing else needs to change.
  */
 
 export type ContactChannel = {
   label: string;
   /** Displayed text. Keep it human-readable, not a raw URL. */
   value: string;
-  /** Leave as `null` until a real destination exists; the UI renders it as plain text. */
+  /** `null` renders the channel as plain text instead of a link. */
   href: string | null;
 };
 
@@ -20,7 +18,7 @@ export const site = {
   title: "Kartik — Video Editor & Visual Storyteller",
   description:
     "Kartik is a video editor who turns raw footage into clear, engaging, visually memorable stories — short form, long form, commercial and cinematic work.",
-  /** Set this once the site has a domain; metadataBase falls back gracefully. */
+  /** Replace once the site has its own domain; drives metadataBase and OG URLs. */
   url: "https://kartik.example.com",
   locale: "en_IN",
   availability: "Available for select projects",
@@ -28,7 +26,7 @@ export const site = {
 } as const;
 
 /**
- * A short line in Kartik's own voice, used beside the portrait. It is a
+ * A short line in Kartik's own voice, used beside the artwork in About. It is a
  * statement about craft, not a claim about results — keep it that way.
  */
 export const aboutQuote = {
@@ -37,16 +35,36 @@ export const aboutQuote = {
 } as const;
 
 export const contact: ContactChannel[] = [
-  { label: "Email", value: "hello@example.com", href: null },
-  { label: "Instagram", value: "@placeholder", href: null },
-  { label: "WhatsApp", value: "Add number", href: null },
+  {
+    label: "Email",
+    value: "kartikediting7@gmail.com",
+    href: "mailto:kartikediting7@gmail.com",
+  },
+  {
+    label: "Instagram",
+    value: "@kartik2x",
+    href: "https://www.instagram.com/kartik2x",
+  },
+  {
+    label: "WhatsApp",
+    value: "+91 83818 11235",
+    href: "https://wa.me/918381811235",
+  },
 ];
 
+/**
+ * Footer links. Add channels here as they go live — anything with a `null`
+ * href renders as plain text, so it is better to leave one out than to ship a
+ * dead link.
+ */
 export const socials: ContactChannel[] = [
-  { label: "Instagram", value: "Instagram", href: null },
-  { label: "YouTube", value: "YouTube", href: null },
-  { label: "Vimeo", value: "Vimeo", href: null },
-  { label: "LinkedIn", value: "LinkedIn", href: null },
+  {
+    label: "Instagram",
+    value: "Instagram",
+    href: "https://www.instagram.com/kartik2x",
+  },
+  { label: "WhatsApp", value: "WhatsApp", href: "https://wa.me/918381811235" },
+  { label: "Email", value: "Email", href: "mailto:kartikediting7@gmail.com" },
 ];
 
 export const navigation = [

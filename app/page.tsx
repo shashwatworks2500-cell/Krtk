@@ -7,7 +7,7 @@ import { Process } from "@/components/sections/process";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Services } from "@/components/sections/services";
 import { Statement } from "@/components/sections/statement";
-import { site } from "@/data/site";
+import { contact, site, socials } from "@/data/site";
 
 /** Person record so search engines read the site as a portfolio, not a page. */
 const personJsonLd = {
@@ -17,6 +17,12 @@ const personJsonLd = {
   jobTitle: `${site.role} & ${site.discipline}`,
   description: site.description,
   url: site.url,
+  email: contact.find((channel) => channel.label === "Email")?.value,
+  sameAs: socials
+    .map((channel) => channel.href)
+    .filter(
+      (href): href is string => href !== null && href.startsWith("https://"),
+    ),
 };
 
 export default function Home() {

@@ -5,6 +5,10 @@
  * point `poster` at a still in /public/images/projects and, if there is a silent
  * loop to preview on hover, `clip` at a file in /public/videos/projects.
  * While `poster` is null the card renders the designed frame placeholder.
+ *
+ * `clip` is a short muted preview loop, not the finished film. Keep it under a
+ * couple of megabytes — see public/videos/projects/README.md. The full cut
+ * belongs on a video host, linked from `href`.
  */
 
 export type ProjectFormat = "21:9" | "16:9" | "4:5" | "1:1" | "9:16";
@@ -46,15 +50,17 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    // First slot with real artwork. The title and description below are
+    // stand-ins written to fit the still — replace them with the real ones.
     id: "02",
-    title: "Project Two",
-    category: "Social Media / Reels",
+    title: "Morning Ride",
+    category: "Automotive / Lifestyle",
     description:
-      "Vertical short form built to hold attention in the first second and keep it to the last frame.",
+      "Cut cold and quiet — fog, engine and no music for the first thirty seconds, so the ride arrives before the edit does.",
     year: "2026",
-    runtime: "00:34",
-    format: "9:16",
-    poster: null,
+    runtime: "01:18",
+    format: "4:5",
+    poster: "/images/projects/project-02.jpg",
     clip: null,
     href: null,
   },

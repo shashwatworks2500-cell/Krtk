@@ -60,26 +60,6 @@ await writeFile(
     `export const heroBlurDataURL =\n  "data:image/webp;base64,${blur.toString("base64")}";\n`,
 );
 
-/* A tighter 4:5 detail crop of the same frame, used in the About section so
-   the page has a second visual anchor without reaching for stock imagery. */
-const detailOut = out.replace(/kartik-hero/, "kartik-portrait");
-const detail = await sharp(out).metadata();
-if (detail.width && detail.height) {
-  const detailWidth = Math.round(detail.width * 0.66);
-  const detailHeight = Math.round(detailWidth * 1.25);
-  await sharp(out)
-    .extract({
-      left: Math.round(detail.width * 0.19),
-      top: Math.round(detail.height * 0.2),
-      width: Math.min(detailWidth, detail.width),
-      height: Math.min(detailHeight, detail.height),
-    })
-    .resize({ width: 900, withoutEnlargement: true })
-    .jpeg({ quality: 88, mozjpeg: true })
-    .toFile(detailOut);
-  console.log(`wrote ${detailOut}`);
-}
-
 const result = await sharp(out).metadata();
 console.log(`wrote ${out} (${result.width}x${result.height})`);
 console.log("wrote app/hero-blur.ts");

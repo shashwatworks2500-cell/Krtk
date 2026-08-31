@@ -12,10 +12,8 @@ export function Hero() {
       id="top"
       className="bg-carbon-deep relative isolate min-h-[100dvh] overflow-hidden"
     >
-      {/* Layer 0 — the solid wordmark. It sits behind the subject on wide
-          screens for the double exposure, and in front of it on a phone,
-          where legibility matters more than the effect. */}
-      <div className="hero-slot z-30 md:z-0">
+      {/* Layer 0 — the solid wordmark, behind the subject. */}
+      <div className="hero-slot z-0">
         <h1 className="hero-word hero-word--solid">
           {site.name}
           <span className="sr-only">
@@ -34,7 +32,7 @@ export function Hero() {
 
       {/* Layer 1 — the subject. */}
       <div className="absolute inset-0 z-10">
-        <div className="absolute right-[-14%] bottom-0 h-[76vh] w-[104%] sm:right-[-6%] sm:h-[82vh] sm:w-[80%] md:right-[2%] md:w-[54%] md:max-w-[680px] lg:right-[7%] lg:w-[46%]">
+        <div className="absolute right-[-12%] bottom-0 h-[70vh] w-[80%] sm:right-[-6%] sm:h-[82vh] sm:w-[74%] md:right-[2%] md:w-[54%] md:max-w-[680px] lg:right-[7%] lg:w-[46%]">
           <Image
             src="/images/kartik-hero.jpg"
             alt={`${site.name}, ${site.role.toLowerCase()}, photographed in a doorway`}
@@ -43,7 +41,7 @@ export function Hero() {
             fetchPriority="high"
             placeholder="blur"
             blurDataURL={heroBlurDataURL}
-            sizes="(max-width: 767px) 92vw, (max-width: 1023px) 52vw, 46vw"
+            sizes="(max-width: 639px) 80vw, (max-width: 767px) 74vw, (max-width: 1023px) 54vw, 46vw"
             className="hero-portrait object-cover object-[52%_14%]"
           />
           {/* Wash the lit wall on the right back down to carbon. */}
@@ -52,14 +50,11 @@ export function Hero() {
 
         {/* Scrim: heavy on a phone, where the wordmark sits on top of the
             photograph; a whisper on desktop, where it only sinks the base. */}
-        <div className="from-carbon-deep via-carbon-deep/80 absolute inset-x-0 bottom-0 h-[52vh] bg-gradient-to-t to-transparent md:hidden" />
+        <div className="from-carbon-deep via-carbon-deep/60 absolute inset-x-0 bottom-0 h-[22vh] bg-gradient-to-t to-transparent md:hidden" />
       </div>
 
       {/* Layer 2 — outlined wordmark in front of the subject. */}
-      <div
-        className="hero-slot hero-outline-mask z-20 hidden md:block"
-        aria-hidden="true"
-      >
+      <div className="hero-slot hero-outline-mask z-20" aria-hidden="true">
         <span className="hero-word hero-word--outline">{site.name}</span>
       </div>
 
